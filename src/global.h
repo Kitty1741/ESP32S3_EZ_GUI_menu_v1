@@ -1,6 +1,11 @@
 #ifndef __GLOBAL_H__
 #define __GLOBAL_H__
 
+//menu.h
+typedef struct option_t option;
+typedef struct menu_t menu;
+#include <keybord/keybord.h>
+
 //这个头文件定义了各种用于模块信息交换的数据类型
 //使用本菜单时请先看看
 
@@ -12,7 +17,7 @@
 
 
 //菜单里的五个键值
-typedef enum{
+typedef enum KEY_VALUE_t{
 
     KEY_NULL,//没有按键按下
     KEY_UP_NUM,//“上”键
@@ -25,7 +30,7 @@ typedef enum{
 //键盘的结构体
 typedef struct menu_keybord_t{
 
-    KEY_VALUE key_enum;
+    int key_enum;
     int key_value;
     int press_time;
 
@@ -43,17 +48,38 @@ typedef struct menu_keybord_t{
 最大化降低耦合
 输出格式标准规范
 */
-//固定的几种屏幕输出模式(以叠加?)
+//固定的几种屏幕输出模式
 typedef enum{
-
-    NUL,//啥也不输出
-    LOADING,//输出加载中
-    EZ_INFO,//输出简单信息
-    MENU,//输出菜单
-    TEXT_LIST,//输出文字列表
-    PICTURE,//输出图片
-
+    DISPLAY_MODE_NONE,      // 不显示
+    DISPLAY_MODE_LOADING,   // 加载中
+    DISPLAY_MODE_INFO,      // 信息显示（简单信息）
+    DISPLAY_MODE_MENU,      // 菜单显示
+    DISPLAY_MODE_LIST,      // 文字列表
+    DISPLAY_MODE_IMAGE,     // 图片显示
 }PRINT_MODE;
+
+//定义图片类型用来存储图片
+typedef struct image_t{
+    char image_data[1024];//正好存储128*64个点的数据
+}image;
+
+//可能出现的信息类型
+typedef union{
+    char* str[64];//字符串指针，对应信息,菜单,文字类型
+    menu* menu_data;//菜单，对应菜单类型
+    image* img;//图片，对应图片类型
+}display_data;
+
+//用来传值打印内容的结构
+typedef struct display_info_t{
+
+    PRINT_MODE mode;//输出内容的类型
+    display_data data;//内含一个和类型对应的数据的指针
+    unsigned char x;//在屏幕上的坐标
+    unsigned char y;//（只对一部分选项生效）
+    struct display_info_t *next;//链表结构，方便叠加图层
+
+}display_info;
 
 
 
@@ -65,10 +91,11 @@ typedef enum{
 //模块需要就自取信息
 typedef struct menu_event_t{
 
-    menu_keybord keybord_status;
+    menu_keybord *keybord_status;
+    display_info *display;
     
 }menu_event;
 
-menu_event MainEventManager;
+extern menu_event MainEventManager;
 
 #endif

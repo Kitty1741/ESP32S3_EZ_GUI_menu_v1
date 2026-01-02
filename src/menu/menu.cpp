@@ -4,61 +4,56 @@
 #include <global.h>
 #include <menu\menu.h>
 
-/*
-    函数名字：set_menu
-    函数功能：根据接口里的keybord_status值，设置菜单显示
-    返回值：没有
-    参数：
-        MENU
-        类型：menu
-        作用：告诉函数应该打印哪个菜单
-*///
-void set_menu(  ){
 
-}
+//这个文件放用来计算菜单和列表显示的函数
+
+
+
 
 
 
 
 /*
-    函数名字：print_menu
-    函数功能：打印给定菜单到u8g2上
-    返回值：没有
+    函数名字：set_cursor
+    函数功能：根据接口里的键值，设置光标
+    返回值：
+        类型：bool
+        意义：返回是否按下退出,如果是返回true
     参数：
         MENU
-        类型：menu
-        作用：告诉函数应该打印哪个菜单
+        类型：menu*
+        作用：告诉函数菜单的长度，用来设置光标
 *///
-void print_menu( menu MENU ){
+bool set_cursor( menu *MENU ){
 
-    static unsigned char cursor_line = 0;//光标所在位置
-    unsigned char view_line = 0;//显示的第一行
+  static int key;
+  key = KEY_NULL;
 
-    //通过光标计算屏幕所在行
-    if( MENU.length < 4 ){
-      view_line = 0;
-    }else{
-      cursor_line == 0                ? view_line = 0 :
-      cursor_line == MENU.length -2   ? view_line = cursor_line -2 :
-      cursor_line == MENU.length -1   ? view_line = cursor_line -3 :
-      /*default*/view_line = cursor_line -1;
-    }
-
-    //显示到U8G2
-    u8g2.clearBuffer();
-
-    u8g2.drawUTF8(3 ,3 , MENU.name );//画菜单名字
-    u8g2.drawFrame(0, 1, 128, 16); //画空心矩形
-
-    for(int i=0; i<4; i++){
-      if( i <= MENU.length -1 ){
-        u8g2.drawUTF8(4 ,18+12*i , MENU.list[ i + view_line ].name );//打印选项名字
-    }} 
+  //检测按键是否松开
+  if( MainEventManager.keybord_status->key_enum != KEY_NULL ){//如果没有松开
+    key = MainEventManager.keybord_status->key_enum;//记录此时的值
+  }else{//如果松开了
     
-    u8g2.drawBox( 0 , ( cursor_line - view_line )*12 +17 , 80 , 12 ); //打印光标
-    u8g2.drawBox( 126 , ( cursor_line / 1.0 / MENU.length )*47+17 , 2 , 8 ); //打印位置指示器
-
-    u8g2.sendBuffer();
-
-    return;
+    //根据输入的键值确定光标移动/其他操作
+    switch( key ){
+      case KEY_NULL:break;
+      case KEY_UP_NUM:{//光标上移
+        MENU->cursor != 0 ?
+        MENU->cursor -- : MENU->cursor = MENU->length - 1 ;
+      }break;
+      case KEY_OK_NUM:{//进入光标所指选项
+        MENU->list[MENU->cursor].fun();
+        menu_init();//完事还原默认设置
+      }break;
+      case KEY_DOWN_NUM:{//光标下移
+        MENU->cursor != MENU->length -1 ?
+        MENU->cursor ++ : MENU->cursor = 0 ;
+      }break;
+      case KEY_BACK_NUM:{//返回
+        MENU->cursor = 0;
+        return true;
+      }break;
+    }
+  }
+  return false;
 }

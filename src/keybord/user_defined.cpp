@@ -2,6 +2,7 @@
 #include <global.h>
 #include <keybord\keybord.h>
 #include <setting.h>
+#include <keybord/user_defined.h>
 
 //用户可以自己定义的函数放在这里
 
@@ -9,15 +10,15 @@
 //把你自己的单次键盘扫描函数放在这里                 |
 //这里的函数由你自己调用，if你不用也可以空着         |
 //只要你的扫描-传值函数正常工作就行了                ↓
-int (*const user_scan_once)() = default_scan_once_function;
+int (* user_scan_once)() = default_scan_once_function;
 
 //把你自己的完整键盘 扫描-传值 函数放在这里  |
 //这里的函数会定时被timer中断执行           ↓
-void (*const user_scan_keybord)() = default_scan_function;
+void (* user_scan_keybord)() = default_scan_function;
 
 //把你自己的键盘初始化函数放在这|
 //这里的函数会定时被setup()执行 ↓
-void (*const user_init_keybord)() = default_init_function;
+void (* user_init_keybord)() = default_init_function;
 
 
 
@@ -27,19 +28,19 @@ void (*const user_init_keybord)() = default_init_function;
 //简单的键盘扫描函数
 //功能：在中断中扫描键盘然后赋值给MainEventManager.keybord_status
 void default_scan_function(){
-  static KEY_VALUE key_value;//防止频繁入栈出栈影响性能
+  static int key_value;//防止频繁入栈出栈影响性能
   static int press_time;
 
   //扫描和计时
   key_value = user_scan_once();
-  key_value == 0 ?
-  press_time = 0  :
+  key_value == KEY_NULL ?
+  press_time = KEY_NULL :
   press_time += 20 ;
 
   //直接把数据打入公共结构
-  MainEventManager.keybord_status.key_enum = key_value;
-  MainEventManager.keybord_status.key_value = key_value;
-  MainEventManager.keybord_status.press_time = press_time;
+  MainEventManager.keybord_status->key_enum = key_value;
+  MainEventManager.keybord_status->key_value = key_value;
+  MainEventManager.keybord_status->press_time = press_time;
 
   return;
 }
