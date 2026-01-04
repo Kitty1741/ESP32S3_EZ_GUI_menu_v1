@@ -10,12 +10,14 @@ typedef struct list_t list;
 //这个头文件定义了各种用于模块信息交换的数据类型
 //使用本菜单时请先看看
 
+
+
+
 /*键盘*/
 /*
 用一个定时器定时扫描键盘
 下面的结构用于记载定时返回的按键信息
 */
-
 
 //菜单里的五个键值
 typedef enum KEY_VALUE_t{
@@ -39,9 +41,11 @@ typedef struct menu_keybord_t{
 
 
 
+
+
 /*显示*/
 /*
-这里的几种结构告诉显示器输出什么
+这里的几种结构告诉显示函数输出什么
 
 */
 //固定的几种屏幕输出模式
@@ -67,6 +71,11 @@ typedef union{
     list* list_t;//列表类型
 }display_data;
 
+
+
+
+
+
 //用来传值打印内容的结构
 typedef struct display_info_t{
 
@@ -80,12 +89,10 @@ typedef struct display_info_t{
 
 
 
+
+
 //这里定义了一个用于数据交换的结构
 //不同功能只能以此为接口进行最低耦合的开发
-////
-//最简实现:先来依托大的
-//仅仅定义几种数据结构来使各个模块通信
-//模块需要就自取信息
 typedef struct menu_event_t{
 
     menu_keybord *keybord_status;

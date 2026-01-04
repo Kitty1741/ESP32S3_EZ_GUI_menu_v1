@@ -48,3 +48,47 @@ void init_keybord_timer(){
     }break;            /*对于40000↑说明：0.02s*(160MHZ/分频系数)*/
   }
 }
+
+
+
+
+
+/*
+    函数名字：get_key_value
+    函数功能：返回接口里的键值，使代码易读
+    返回值：
+        类型：int
+        意义：接口里的键值
+    参数：没有
+*///
+uint8_t get_key_value(){
+  return MainEventManager.keybord_status->key_enum;
+}
+
+
+
+
+/*
+    函数名字：get_last_key
+    函数功能：检测是否松手并返回最近一次松手时按键的值（多线程用不了），然后销毁这个值
+    返回值：
+        类型：int
+        意义：接口里的最近一次松手时按键的值（没松手/没动静都返回0）
+    参数：没有
+*///
+uint8_t get_last_key(){
+
+  static int key;
+  static int last_key;
+
+  key = get_key_value();
+  //检测按键是否松开
+  if( key != (int)KEY_NULL ){//如果没有松开
+    last_key = key;//记录此时的值
+    return 0;
+  }else{//如果松开了
+    key = last_key;//初始化
+    last_key = 0;
+    return key;
+  }
+}

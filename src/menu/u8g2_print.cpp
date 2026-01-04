@@ -65,7 +65,7 @@ inline void u8g2_print_display_info_once(display_info *INFO){
             u8g2_print_menu( INFO->data.menu_t );
         }break;// 菜单显示
         case DISPLAY_MODE_LIST   :{
-            u8g2_print_LIST( INFO );
+            u8g2_print_list( INFO );
         }break;// 文字列表
         case DISPLAY_MODE_IMAGE  :{
 
@@ -166,10 +166,10 @@ void u8g2_print_menu( menu *MENU ){
 
     for(int i=0; i<4; i++){
       if( i < MENU->length ){
-        u8g2.drawUTF8(4 ,18+12*i , MENU->list[ i + view_line ].name );//打印选项名字
+        u8g2.drawUTF8(4 ,18+12*i , MENU->menu_list[ i + view_line ].name );//打印选项名字
       }
     } 
-    width = u8g2.getUTF8Width( MENU->list[ MENU->cursor ].name) +6;//打印光标
+    width = u8g2.getUTF8Width( MENU->menu_list[ MENU->cursor ].name) +6;//打印光标
     u8g2.drawBox( 2 , ( MENU->cursor - view_line )*12 +17 , width , 12 ); 
     u8g2.drawBox( 127 , ( MENU->cursor / 1.0 / ( MENU->length -1 ) )*40+17 , 1 , 7 ); //打印位置指示器
 
@@ -187,7 +187,7 @@ void u8g2_print_menu( menu *MENU ){
         类型：display_info*
         作用：传递要打印的列表信息
 *///
-void u8g2_print_LIST( display_info *INFO ){
+void u8g2_print_list( display_info *INFO ){
 
     uint8_t list_view_line = INFO->data.list_t->cursor;//列表显示在屏幕上的第一行对应光标行数
 
@@ -201,5 +201,4 @@ void u8g2_print_LIST( display_info *INFO ){
             /* 打印内容 */INFO->data.list_t->list[ i + list_view_line ]
         );
     }
-
 }

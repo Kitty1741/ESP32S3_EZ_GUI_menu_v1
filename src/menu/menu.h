@@ -13,7 +13,8 @@
 typedef struct option_t{
 
     char name[40];
-    void (*fun)();
+    bool (*callback)(void*);//这里放回调函数指针和回调函数参数
+    void* param;            //task_loop的参数
 
 }option;
 
@@ -23,7 +24,7 @@ typedef struct menu_t{
     const char *name;//菜单的标题
     int length;//菜单的列表长度
     unsigned char cursor;//菜单的光标位置
-    option *list;//菜单对应的列表
+    option *menu_list;//菜单对应的选项列表
 
 }menu;
 
@@ -47,11 +48,14 @@ typedef struct list_t{
 extern menu MAIN_MENU;
 
 //对外声明函数
+void task_loop( bool (*function)(void*) , void* param );
+bool do_nothing( void* do_nothing );
 void menu_init_u8g2();
 display_info image_to_display_info( char IMAGE[1024] );
+display_info config_menu_display_info(menu *MENU);
+display_info config_list_display_info(list *LIST);
 bool set_menu_cursor( menu *MENU );
 bool set_list_cursor( list *LIST );
-void do_nothing();
 
 //测试test
 void test_loop();

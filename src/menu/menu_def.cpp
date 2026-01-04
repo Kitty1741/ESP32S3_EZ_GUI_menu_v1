@@ -4,7 +4,7 @@
 #include <global.h>
 #include <menu/internal.h>
 
-//这个文件专门用来定义菜单
+//这个文件专门用来定义主菜单
 
 
 //主菜单选项列表
@@ -23,7 +23,7 @@ menu MAIN_MENU = {
 
     /*标题*/.name = "主菜单",
     /*长度*/.length = sizeof(MAIN_MENU_LIST)/sizeof(MAIN_MENU_LIST[0]),
-    /*选项列表*/.list = MAIN_MENU_LIST,
+    /*选项列表*/.menu_list = MAIN_MENU_LIST,
 
 };
 

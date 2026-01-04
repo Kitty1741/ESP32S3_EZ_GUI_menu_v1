@@ -8,6 +8,7 @@
 #include <Wire.h>
 #include <global.h>
 #include <menu/menu.h>
+#include <menu/u8g2_print.h>
 
 //extern声明u8g2类
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
@@ -16,10 +17,10 @@ extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
 extern menu MAIN_MENU;
 
 //对内声明函数
-uint8_t get_key_value();
-uint8_t get_last_key();
+
 
 //测试test
 void test_loop();
+extern bool test_print_num(void*);
 
 #endif

@@ -14,6 +14,6 @@ void u8g2_print_INFO( display_info *INFO );
 void u8g2_print_LOADING();
 void u8g2_print_menu( menu *MENU );
 void u8g2_print_INFO( display_info *INFO );
-void u8g2_print_LIST( display_info *INFO );
+void u8g2_print_list( display_info *INFO );
 
 #endif
