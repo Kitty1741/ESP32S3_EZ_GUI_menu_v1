@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <global.h>
 #include <keybord\keybord.h>
-#include <setting.h>
 #include <keybord/user_defined.h>
 
 //用户可以自己定义的函数放在这里

@@ -4,7 +4,6 @@
 #include <global.h>
 #include <menu/internal.h>//内部模块
 #include <menu\u8g2_print.h>
-#include <setting.h>
 
 //这里只放打印函数
 

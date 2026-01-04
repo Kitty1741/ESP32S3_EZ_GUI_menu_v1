@@ -6,6 +6,7 @@ typedef struct option_t option;
 typedef struct menu_t menu;
 typedef struct list_t list;
 #include <keybord/keybord.h>
+#include <setting.h>
 
 //这个头文件定义了各种用于模块信息交换的数据类型
 //使用本菜单时请先看看
@@ -22,11 +23,11 @@ typedef struct list_t list;
 //菜单里的五个键值
 typedef enum KEY_VALUE_t{
 
-    KEY_NULL,//没有按键按下
-    KEY_UP_NUM,//“上”键
-    KEY_OK_NUM,//确认键
-    KEY_DOWN_NUM,//“下”键
-    KEY_BACK_NUM,//返回键
+    KEY_NULL =       KEY_NULL_VALUE,//没有按键按下
+    KEY_UP_NUM =     KEY_UP_NUM_VALUE,//“上”键
+    KEY_OK_NUM =     KEY_OK_NUM_VALUE,//确认键
+    KEY_DOWN_NUM =   KEY_DOWN_NUM_VALUE,//“下”键
+    KEY_BACK_NUM =   KEY_BACK_NUM_VALUE,//返回键
 
 }KEY_VALUE;
 
@@ -65,7 +66,7 @@ typedef struct image_t{
 
 //可能出现的信息类型
 typedef union{
-    char* str[64];//字符串指针列表信息,文字类型
+    char* str[64];//简单文本类型
     menu* menu_t;//菜单类型
     image* img;//图片类型
     list* list_t;//列表类型

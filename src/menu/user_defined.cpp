@@ -13,7 +13,7 @@ bool test_print_num( void* num_address ){
 
     int key;
     char str[64];
-    sprintf( str , "%d" , num );
+    sprintf( str , "%d" , millis() );
     static list NUM_LIST;
     NUM_LIST.list[0] = str;
     NUM_LIST.list[1] = "meow";
@@ -28,4 +28,3 @@ bool test_print_num( void* num_address ){
     if(key == KEY_BACK_NUM)
     return true ; return false ;
 }
-

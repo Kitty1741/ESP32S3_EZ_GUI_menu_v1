@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <global.h>
 #include <keybord\keybord.h>
-#include <setting.h>
 #include <Ticker.h>
 #include <driver/timer.h>
 
@@ -57,12 +56,25 @@ void init_keybord_timer(){
     函数名字：get_key_value
     函数功能：返回接口里的键值，使代码易读
     返回值：
-        类型：int
+        类型：uint8_t
         意义：接口里的键值
     参数：没有
 *///
 uint8_t get_key_value(){
   return MainEventManager.keybord_status->key_enum;
+}
+
+
+/*
+    函数名字：get_press_time
+    函数功能：返回接口里的按键按下时间，使代码易读
+    返回值：
+        类型：uint8_t
+        意义：接口里的按键按下时间(单位毫秒)
+    参数：没有
+*///
+uint8_t get_press_time(){
+  return MainEventManager.keybord_status->press_time;
 }
 
 
@@ -72,7 +84,7 @@ uint8_t get_key_value(){
     函数名字：get_last_key
     函数功能：检测是否松手并返回最近一次松手时按键的值（多线程用不了），然后销毁这个值
     返回值：
-        类型：int
+        类型：uint8_t
         意义：接口里的最近一次松手时按键的值（没松手/没动静都返回0）
     参数：没有
 *///
