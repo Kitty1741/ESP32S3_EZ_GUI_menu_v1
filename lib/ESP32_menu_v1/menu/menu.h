@@ -57,7 +57,4 @@ display_info image_to_display_info( char IMAGE[1024] );
 display_info config_menu_display_info(menu *MENU);
 display_info config_list_display_info(list *LIST);
 
-//测试test
-void test_loop();
-
 #endif

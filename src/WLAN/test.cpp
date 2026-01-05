@@ -17,7 +17,7 @@ option TEST_MENU_LIST[] = {
 
     {"测试",do_nothing,NULL},
     {"测试00",do_nothing,NULL},
-    {"test",test_print_num,&millis_num},
+    {"test",do_nothing,&millis_num},
 
 };
 //测试菜单
