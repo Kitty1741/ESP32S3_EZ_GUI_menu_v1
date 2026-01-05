@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <driver/timer.h>
-#include <Ticker.h>
 
 #include <keybord/keybord.h>
 #include <global.h>
@@ -11,7 +10,27 @@ extern void (* user_scan_keybord)();//定时中断调用的扫描函数,直接�
 extern void (* user_init_keybord)();//初始化键盘的硬件
 
 #if ( use_which_timer == 4 )
-Ticker keyScanner;
+
+/*
+    函数名字：ManagerKeybord
+    函数功能：调用用户定义的扫描函数，上报数据管理器，由freeRTOS事件调用
+    返回值：没有
+    参数：
+        no_param
+        类型：void*
+        意义：由freeRTOS调用的回调函数必须要有个void*参数
+*///
+void ManagerKeybord( void* no_param ){
+    while(1){
+        user_scan_keybord();
+        vTaskDelay( pdMS_TO_TICKS(20) );
+        // 监控栈高水位线（历史最小剩余栈）
+        UBaseType_t uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL);
+    }
+}
+
+TaskHandle_t KeybordTask;
+
 #endif
 
 void init_keybord_timer();
@@ -37,9 +56,16 @@ void init_keybord_timer(){
   switch(use_which_timer){
     case 5:break;
     case 4:{//选择软件定时器
-      #if ( use_which_timer == 4 )
-      keyScanner.attach_ms( 20 , user_scan_keybord );//每20ms执行一次“scan_keybord”对应的函数
-      #endif
+        #if ( use_which_timer == 4 )
+        xTaskCreate(
+            ManagerKeybord,     // 任务函数指针
+            "ManagerKeybord",   // 任务名称（调试用）
+            3072,               // 任务栈大小（字节）
+            NULL,               // 传递给任务的参数（本例为空）
+            8,                 // 任务优先级（1-24）
+            &KeybordTask      //任务句柄 (用于引用此任务)（TaskHandle_t值的地址）
+        );    
+        #endif
     }break;
     default:{//选择硬件定时器
       timer = timerBegin( use_which_timer , 80 , true );//初始化对应硬件定时器
@@ -49,9 +75,6 @@ void init_keybord_timer(){
     }break;            /*对于40000↑说明：0.02s*(160MHZ/分频系数)*/
   }
 }
-
-
-
 
 
 /*

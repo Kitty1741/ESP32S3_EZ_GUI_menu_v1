@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include <menu_API.h>
 #include <WLAN/WLAN.h>
+#include <WiFi.h>
 
 void setup() {
 
@@ -22,6 +23,8 @@ void setup() {
 extern char test_str[];
 
 void loop(){
+    void initstr();
+    initstr();
     sprintf(test_str,"ms:%d",millis());
     //主菜单
     set_menu_cursor( MAIN_MENU_INFO.data.menu_t );

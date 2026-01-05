@@ -44,21 +44,21 @@ void default_scan_function(){
   return;
 }
 
-//初始化键盘引脚10 11 12 13
+//初始化键盘引脚
 void default_init_function(){
-  pinMode(10,INPUT_PULLUP);
-  pinMode(11,INPUT_PULLUP);
-  pinMode(12,INPUT_PULLUP);
-  pinMode(13,INPUT_PULLUP);
+  pinMode( UP_NUM_IO   ,INPUT_PULLUP);
+  pinMode( OK_NUM_IO   ,INPUT_PULLUP);
+  pinMode( DOWN_NUM_IO ,INPUT_PULLUP);
+  pinMode( BACK_NUM_IO ,INPUT_PULLUP);
 }
 
-//扫描键盘返回键值1 2 3 4
-//键盘在10 11 12 13引脚上
+//扫描键盘返回枚举键值
+//默认键盘在10 11 12 13引脚上
 int default_scan_once_function(){
-  if     ( digitalRead(10) == 0 ){return (int)KEY_UP_NUM;}
-  else if( digitalRead(11) == 0 ){return (int)KEY_OK_NUM;}
-  else if( digitalRead(12) == 0 ){return (int)KEY_DOWN_NUM;}
-  else if( digitalRead(13) == 0 ){return (int)KEY_BACK_NUM;}
+  if     ( digitalRead( UP_NUM_IO   ) == 0 ){return (int)KEY_UP_NUM;}
+  else if( digitalRead( OK_NUM_IO   ) == 0 ){return (int)KEY_OK_NUM;}
+  else if( digitalRead( DOWN_NUM_IO ) == 0 ){return (int)KEY_DOWN_NUM;}
+  else if( digitalRead( BACK_NUM_IO ) == 0 ){return (int)KEY_BACK_NUM;}
   else{
     return KEY_NULL;
   }

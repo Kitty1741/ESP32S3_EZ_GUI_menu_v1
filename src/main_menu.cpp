@@ -27,7 +27,7 @@ menu MAIN_MENU = {
     /*长度*/.length = sizeof(MAIN_MENU_LIST)/sizeof(MAIN_MENU_LIST[0]),
     /*选项列表*/.menu_list = MAIN_MENU_LIST,
 };
-char test_str[12];
+char test_str[12] = "hello";
 list TEST_LIST = {
     .list = {
         [0] = "test_text" ,
@@ -36,7 +36,6 @@ list TEST_LIST = {
         [3] = "中文测试" ,
         [4] = "中文测试" ,
         [5] = "test_text" ,
-        [6] = "中文测试" ,
     }
 };
 option TEST_MENU_LIST[] = {
@@ -52,3 +51,7 @@ menu TEST_MENU = {
 display_info MAIN_MENU_INFO = menu_to_display_info( &MAIN_MENU );
 display_info TEST_LIST_INFO = list_to_display_info( &TEST_LIST );
 display_info TEST_MENU_INFO = menu_to_display_info( &TEST_MENU );
+
+void initstr(){
+    TEST_LIST.list[6] = test_str;
+}

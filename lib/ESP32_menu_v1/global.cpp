@@ -24,7 +24,7 @@ void ManagerDisplay( void* no_param ){
 
 while(1){
     //检测到刷新信号就刷新
-    xSemaphoreTake( DisplayUpdateSem,portMAX_DELAY );
+    xSemaphoreTake( DisplayUpdateSem , portMAX_DELAY );
              /*关闭↓互斥锁，防止这时正好有人改动输出画面*/
     if( xSemaphoreTake( DisplayMutex, 0 ) == pdTRUE ){//如果关锁成功
         MainEventManager.frame += 1;//显示成功算一帧，用来定位动画
@@ -32,6 +32,7 @@ while(1){
         xSemaphoreGive( DisplayMutex );//开锁
     }delay(0);
 }
+
 }
 
 //初始化事件管理器
@@ -44,9 +45,9 @@ void init_MainEventManager(){
     xTaskCreate(
         ManagerDisplay,     // 任务函数指针
         "ManagerDisplay",   // 任务名称（调试用）
-        2048,               // 任务栈大小（字节）
+        12288,               // 任务栈大小（字节）
         NULL,               // 传递给任务的参数（本例为空）
-        3,                 // 任务优先级（1-24，与loop任务相同）
+        3,                 // 任务优先级（1-24）
         &DisplayTask      //任务句柄 (用于引用此任务)（TaskHandle_t值的地址）
     );
     xSemaphoreGive( DisplayUpdateSem );//第一次时间刷新，防止开机黑屏
