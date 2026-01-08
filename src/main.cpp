@@ -18,6 +18,9 @@ void setup() {
 
   //menu_init
   menu_init_u8g2();
+
+  void test();
+  test();
 }
 
 void loop(){
