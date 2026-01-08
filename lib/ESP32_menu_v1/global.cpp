@@ -22,17 +22,15 @@ TaskHandle_t DisplayTask;//显示任务
 *///
 void ManagerDisplay( void* no_param ){
 
-while(1){
-    //检测到刷新信号就刷新
-    xSemaphoreTake( DisplayUpdateSem , portMAX_DELAY );
-             /*关闭↓互斥锁，防止这时正好有人改动输出画面*/
-    if( xSemaphoreTake( DisplayMutex, 0 ) == pdTRUE ){//如果关锁成功
-        MainEventManager.frame += 1;//显示成功算一帧，用来定位动画
-        u8g2_print_display_info(MainEventManager.display);//打印信息
-        xSemaphoreGive( DisplayMutex );//开锁
-    }delay(0);
-}
-
+    while(1){
+        //检测到刷新信号就刷新
+        xSemaphoreTake( DisplayUpdateSem , portMAX_DELAY );
+                 /*关闭↓互斥锁，防止这时正好有人改动输出画面*/
+        if( xSemaphoreTake( DisplayMutex, 0 ) == pdTRUE ){//如果关锁成功
+            u8g2_print_display_info(MainEventManager.display);//打印信息
+            xSemaphoreGive( DisplayMutex );//开锁
+        }vTaskDelay(1);
+    }
 }
 
 //初始化事件管理器
@@ -54,7 +52,6 @@ void init_MainEventManager(){
 
     MainEventManager.keybord_status = &MainEventManager_keybord_status;
     MainEventManager.display = &MainEventManager_display;
-    MainEventManager.frame = 0;
 
     MainEventManager.keybord_status->key_enum = KEY_NULL;
     MainEventManager.keybord_status->key_value = 0;

@@ -21,9 +21,9 @@ typedef struct list_t list;
 //菜单里的五个键值
 typedef enum KEY_VALUE_t{
 
-    KEY_NULL =       KEY_NULL_VALUE,//没有按键按下
-    KEY_UP_NUM =     KEY_UP_NUM_VALUE,//“上”键
-    KEY_OK_NUM =     KEY_OK_NUM_VALUE,//确认键
+    KEY_NULL     =   KEY_NULL_VALUE,//没有按键按下
+    KEY_UP_NUM   =   KEY_UP_NUM_VALUE,//“上”键
+    KEY_OK_NUM   =   KEY_OK_NUM_VALUE,//确认键
     KEY_DOWN_NUM =   KEY_DOWN_NUM_VALUE,//“下”键
     KEY_BACK_NUM =   KEY_BACK_NUM_VALUE,//返回键
 
@@ -58,9 +58,13 @@ typedef enum{
 }PRINT_MODE;
 
 //定义图片类型用来存储图片
+typedef uint8_t* image_arrow;
 typedef struct image_t{
-    char image_data[1024];//正好存储128*64个点的数据
+    uint8_t width;//图片的宽度
+    uint8_t height;//图片的高度
+    image_arrow image_data;//一维数组指针，指向图片数据
 }image;
+
 
 //可能出现的信息类型
 typedef union{
@@ -89,7 +93,6 @@ typedef struct menu_event_t{
 
     menu_keybord *keybord_status;
     display_info *display;//正在用RTOS开发
-    uint64_t frame;//显示成功算一帧，用来定位动画
     
 }menu_event;
 

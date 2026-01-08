@@ -17,7 +17,7 @@
         类型：void*
         作用：指向一个display_info，
 *///
-bool run_info(void* param){
+bool run_info_data(void* param){
 
     display_info* INFO_ptr = (display_info*)param;
 
@@ -32,7 +32,6 @@ bool run_info(void* param){
 
     set_display_info( INFO_ptr );
     return false;
-
 }
 
 /*

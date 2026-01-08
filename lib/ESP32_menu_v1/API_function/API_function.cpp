@@ -65,14 +65,15 @@ display_info list_to_display_info(list *LIST){
         意义：返回需要渲染的图片的打印信息
     参数：
         IMAGE
-        类型：char[1024]
-        作用：传输需要打印的图片
+        类型：image*
+        作用：指向需要打印的图片的地址
 *///
-display_info image_to_display_info( char IMAGE[1024] ){
+
+display_info image_to_display_info( image* IMAGE ){
 
     display_info image_info;
     image_info.mode = DISPLAY_MODE_IMAGE;//图片打印模式
-    strcpy(image_info.data.img->image_data , IMAGE );//给display_info赋值
+    image_info.data.img = IMAGE;
     return image_info;
 }
 

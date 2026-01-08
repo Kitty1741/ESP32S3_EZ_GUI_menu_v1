@@ -98,7 +98,7 @@ uint8_t get_key_value(){
         意义：接口里的按键按下时间(单位毫秒)
     参数：没有
 *///
-uint8_t get_press_time(){
+uint16_t get_press_time(){
   return MainEventManager.keybord_status->press_time;
 }
 

@@ -20,13 +20,7 @@ void setup() {
   menu_init_u8g2();
 }
 
-extern char test_str[];
-
 void loop(){
-    void initstr();
-    initstr();
-    sprintf(test_str,"ms:%d",millis());
     //主菜单
-    set_menu_cursor( MAIN_MENU_INFO.data.menu_t );
-    set_display_info( &MAIN_MENU_INFO );
+    run_info_data( &MAIN_MENU_INFO );
 }
