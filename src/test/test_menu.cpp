@@ -8,10 +8,11 @@
 option TEST_MENU_LIST[] = {
     {"测试循环",do_nothing},
     {"多行测试",do_nothing},
+    {"测试loading",run_info,&loading},
 };
-//主菜单
+//菜单
 menu TEST_MENU = {
-    /*标题*/.name = "主菜单",
+    /*标题*/.name = "测试菜单",
     /*长度*/.length = sizeof(TEST_MENU_LIST)/sizeof(TEST_MENU_LIST[0]),
     /*选项列表*/.menu_list = TEST_MENU_LIST,
 };

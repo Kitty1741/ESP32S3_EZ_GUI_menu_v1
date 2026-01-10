@@ -52,7 +52,7 @@ typedef struct menu_keybord_t{
 typedef enum{
     DISPLAY_MODE_NONE,      // 不显示
     DISPLAY_MODE_LOADING,   // 加载中
-    DISPLAY_MODE_INFO,      // 信息显示（简单信息）
+    DISPLAY_MODE_TEXT,      // 信息显示（简单信息）
     DISPLAY_MODE_MENU,      // 菜单显示
     DISPLAY_MODE_LIST,      // 文字列表
     DISPLAY_MODE_IMAGE,     // 图片显示
@@ -70,7 +70,7 @@ typedef struct image_t{
 
 //可能出现的信息类型
 typedef union{
-    char* str[64];//简单文本类型
+    char* str[6];//简单文本类型
     menu* menu_t;//菜单类型
     image* img;//图片类型
     list* list_t;//列表类型

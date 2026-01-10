@@ -22,5 +22,5 @@ void setup() {
 
 void loop(){
     //主菜单
-    run_info_data( &MAIN_MENU_INFO );
+    run_info( &MAIN_MENU_INFO );
 }

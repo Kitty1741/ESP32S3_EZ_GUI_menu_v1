@@ -6,6 +6,11 @@
 #include <display/internal.h>//内部模块
 #include <display/u8g2_print.h>
 
+// 定义最大图像尺寸
+#define MAX_IMAGE_WIDTH 128
+#define MAX_IMAGE_HEIGHT 64
+#define MAX_IMAGE_BYTES ((MAX_IMAGE_WIDTH * MAX_IMAGE_HEIGHT) / 8)
+
 //本文件装不直接参与打印的函数
 
 /*
@@ -38,9 +43,10 @@ void set_black_image_background( image* IMAGE , bool if_black ){
     IMAGE->if_black_background = if_black;
 }
 
+
 /*
     函数名字：rotate_image
-    函数功能：顺时针旋转指向的图片90° n次
+    函数功能：顺时针旋转指向的图片90° n次(AI做的)
     返回值：没有
     参数：
         IMAGE
@@ -51,58 +57,140 @@ void set_black_image_background( image* IMAGE , bool if_black ){
         作用：设转动几次
 *///
 void rotate_image(image* IMAGE, uint8_t n) {
-    n %= 4;  // 旋转4次等于原图
-    if (n == 0) return;
-
-    const uint8_t width = IMAGE->width;
-    const uint8_t height = IMAGE->height;
-    const uint8_t bytes_per_line = (width + 7) / 8;
-
-    // 计算旋转后的尺寸
-    uint8_t new_width = height;
-    uint8_t new_height = width;
-    uint8_t new_bytes_per_line = (new_width + 7) / 8;
-
-    // 分配新图像数据
-    uint8_t new_data[1024]; // 1024字节栈缓冲区（128*64/8=1024）
-
-    // 旋转 n 次 (每次90度)
-    for (uint8_t i = 0; i < n; i++) {
-        // 逐像素旋转 (顺时针90度)
-        for (uint8_t y = 0; y < new_height; y++) {  // 新图行
-            for (uint8_t x = 0; x < new_width; x++) {  // 新图列
-                // 计算原图对应位置 (原图行 = new_height - 1 - y, 原图列 = x)
-                uint8_t orig_row = new_height - 1 - y;
-                uint8_t orig_col = x;
-                
-                // 从原图获取位
-                uint8_t byte_idx = orig_row * bytes_per_line + (orig_col / 8);
-                uint8_t bit_pos = 7 - (orig_col % 8);  // 高位在左
-                bool bit = (IMAGE->image_data[byte_idx] >> bit_pos) & 1;
-                
-                // 写入新图 (新图行 = y, 新图列 = x)
-                byte_idx = y * new_bytes_per_line + (x / 8);
-                bit_pos = 7 - (x % 8);
-                if (bit) {
-                    new_data[byte_idx] |= (1 << bit_pos);
-                } else {
-                    new_data[byte_idx] &= ~(1 << bit_pos);
+    if (IMAGE == NULL || IMAGE->image_data == NULL) return;
+    
+    // 计算实际旋转次数（模4运算）
+    uint8_t rot_times = n % 4;
+    if (rot_times == 0) return; // 不需要旋转
+    
+    // 静态临时缓冲区
+    uint8_t temp_buffer[MAX_IMAGE_BYTES];
+    
+    // 当前图像尺寸
+    uint8_t width = IMAGE->width;
+    uint8_t height = IMAGE->height;
+    
+    // 计算每行字节数
+    uint8_t row_bytes = (width + 7) / 8;
+    
+    // 根据旋转次数处理
+    switch (rot_times) {
+        case 1: // 旋转90°（顺时针）
+        {
+            // 新图像尺寸（宽高互换）
+            uint8_t new_width = height;
+            uint8_t new_height = width;
+            uint8_t new_row_bytes = (new_width + 7) / 8;
+            
+            // 清空临时缓冲区
+            memset(temp_buffer, 0, MAX_IMAGE_BYTES);
+            
+            // 遍历原图像每个像素
+            for (uint8_t y = 0; y < height; y++) {
+                for (uint8_t x = 0; x < width; x++) {
+                    // 获取原图像像素值
+                    uint8_t byte_idx = y * row_bytes + (x / 8);
+                    uint8_t bit_pos = 7 - (x % 8);
+                    uint8_t pixel_val = (IMAGE->image_data[byte_idx] >> bit_pos) & 0x01;
+                    
+                    // 计算新位置 (旋转90°顺时针)
+                    uint8_t new_x = height - 1 - y;
+                    uint8_t new_y = x;
+                    
+                    // 计算新图像中的位置
+                    uint8_t new_byte_idx = new_y * new_row_bytes + (new_x / 8);
+                    uint8_t new_bit_pos = 7 - (new_x % 8);
+                    
+                    // 设置新像素值
+                    if (pixel_val) {
+                        temp_buffer[new_byte_idx] |= (1 << new_bit_pos);
+                    }
                 }
             }
+            
+            // 更新图像数据
+            memcpy(IMAGE->image_data, temp_buffer, new_row_bytes * new_height);
+            
+            // 更新图像尺寸
+            IMAGE->width = new_width;
+            IMAGE->height = new_height;
+            break;
         }
-
-        // 更新尺寸和字节数 (为下一次旋转准备)
-        uint8_t temp = new_width;
-        new_width = new_height;
-        new_height = temp;
-        new_bytes_per_line = (new_width + 7) / 8;
+        
+        case 2: // 旋转180°
+        {
+            // 清空临时缓冲区
+            memset(temp_buffer, 0, MAX_IMAGE_BYTES);
+            
+            // 遍历原图像每个像素
+            for (uint8_t y = 0; y < height; y++) {
+                for (uint8_t x = 0; x < width; x++) {
+                    // 获取原图像像素值
+                    uint8_t byte_idx = y * row_bytes + (x / 8);
+                    uint8_t bit_pos = 7 - (x % 8);
+                    uint8_t pixel_val = (IMAGE->image_data[byte_idx] >> bit_pos) & 0x01;
+                    
+                    // 计算新位置 (旋转180°)
+                    uint8_t new_x = width - 1 - x;
+                    uint8_t new_y = height - 1 - y;
+                    
+                    // 计算新图像中的位置
+                    uint8_t new_byte_idx = new_y * row_bytes + (new_x / 8);
+                    uint8_t new_bit_pos = 7 - (new_x % 8);
+                    
+                    // 设置新像素值
+                    if (pixel_val) {
+                        temp_buffer[new_byte_idx] |= (1 << new_bit_pos);
+                    }
+                }
+            }
+            
+            // 更新图像数据
+            memcpy(IMAGE->image_data, temp_buffer, row_bytes * height);
+            // 尺寸不变
+            break;
+        }
+        
+        case 3: // 旋转270°（逆时针90°）
+        {
+            // 新图像尺寸（宽高互换）
+            uint8_t new_width = height;
+            uint8_t new_height = width;
+            uint8_t new_row_bytes = (new_width + 7) / 8;
+            
+            // 清空临时缓冲区
+            memset(temp_buffer, 0, MAX_IMAGE_BYTES);
+            
+            // 遍历原图像每个像素
+            for (uint8_t y = 0; y < height; y++) {
+                for (uint8_t x = 0; x < width; x++) {
+                    // 获取原图像像素值
+                    uint8_t byte_idx = y * row_bytes + (x / 8);
+                    uint8_t bit_pos = 7 - (x % 8);
+                    uint8_t pixel_val = (IMAGE->image_data[byte_idx] >> bit_pos) & 0x01;
+                    
+                    // 计算新位置 (旋转270°)
+                    uint8_t new_x = y;
+                    uint8_t new_y = width - 1 - x;
+                    
+                    // 计算新图像中的位置
+                    uint8_t new_byte_idx = new_y * new_row_bytes + (new_x / 8);
+                    uint8_t new_bit_pos = 7 - (new_x % 8);
+                    
+                    // 设置新像素值
+                    if (pixel_val) {
+                        temp_buffer[new_byte_idx] |= (1 << new_bit_pos);
+                    }
+                }
+            }
+            
+            // 更新图像数据
+            memcpy(IMAGE->image_data, temp_buffer, new_row_bytes * new_height);
+            
+            // 更新图像尺寸
+            IMAGE->width = new_width;
+            IMAGE->height = new_height;
+            break;
+        }
     }
-
-    // 释放原图像数据
-    free(IMAGE->image_data);
-    
-    // 更新图像结构
-    IMAGE->image_data = new_data;
-    IMAGE->width = new_width;
-    IMAGE->height = new_height;
 }

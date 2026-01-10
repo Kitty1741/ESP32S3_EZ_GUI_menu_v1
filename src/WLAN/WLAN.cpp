@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <menu_API.h>
-#include <WLAN/WLAN.h>
-#include <HTTPClient.h> // 关键库，用于HTTP协议
+//#include <WLAN/WLAN.h>
+//#include <HTTPClient.h> // 关键库，用于HTTP协议
 
 
 

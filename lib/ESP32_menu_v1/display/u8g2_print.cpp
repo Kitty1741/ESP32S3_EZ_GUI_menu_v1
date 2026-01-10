@@ -81,8 +81,8 @@ inline void u8g2_print_display_info_once(display_info *INFO){
         case DISPLAY_MODE_LOADING:{
             u8g2_print_LOADING();
         }break;// 加载中
-        case DISPLAY_MODE_INFO   :{
-            u8g2_print_INFO( INFO );
+        case DISPLAY_MODE_TEXT   :{
+            u8g2_print_TEXT( INFO );
         }break;// 信息显示(简单提示)
         case DISPLAY_MODE_MENU   :{
             u8g2_print_menu( INFO->data.menu_t );
@@ -126,7 +126,7 @@ void u8g2_print_display_info( display_info *INFO ){
 
 
 /*
-    函数名字：u8g2_print_INFO
+    函数名字：u8g2_print_TEXT
     函数功能：打印简单信息
     返回值：没有
     参数：
@@ -134,9 +134,9 @@ void u8g2_print_display_info( display_info *INFO ){
         类型：display_info*
         作用：传递要打印的简单信息
 *///
-void u8g2_print_INFO( display_info *INFO ){
+void u8g2_print_TEXT( display_info *INFO ){
 
-    for(int i=0;i<64;i++){
+    for(int i=0;i<6;i++){
         if( INFO->data.str[i] == NULL ){
             break;
         }
@@ -154,19 +154,37 @@ void u8g2_print_INFO( display_info *INFO ){
 void u8g2_print_LOADING(){
 
     display_info INFO;
+    display_info LOADING_TEXT;
     image* IMAGE;
+    static uint16_t frame = 0;
+    
     INFO.mode = DISPLAY_MODE_IMAGE;
-    INFO.data.img = IMAGE;
     INFO.x = 76;
     INFO.y = 20;
 
-    switch( millis() / 100 % 3 ){
-        case 0:IMAGE = &LOADING_IMAGE_1;vTaskDelay(100);break;
-        case 1:IMAGE = &LOADING_IMAGE_2;vTaskDelay(100);break;
-        case 2:IMAGE = &LOADING_IMAGE_3;vTaskDelay(100);rotate_image(IMAGE, 1);break;
-    }
+    LOADING_TEXT.mode = DISPLAY_MODE_TEXT;
+    LOADING_TEXT.x = 28;
+    LOADING_TEXT.y = 24;
+    
+    char str[14];
+    strcpy(str,"加载中");
+    LOADING_TEXT.data.str[0] = (char*)&str;
+    LOADING_TEXT.data.str[1] = NULL;
+    
+    vTaskDelay(100);
+
+    switch( frame%3 ){
+        case 0:IMAGE=&LOADING_IMAGE_1;break;
+        case 1:IMAGE=&LOADING_IMAGE_2;break;
+        case 2:IMAGE=&LOADING_IMAGE_3;break;
+    }frame++;
+    rotate_image(IMAGE,1);
+    INFO.data.img = IMAGE;
+    
+    u8g2.setFont(u8g2_font_wqy16_t_gb2312);
     u8g2_print_BMP( &INFO );
-    u8g2.drawUTF8(20,24,"加载中");
+    u8g2_print_TEXT( &LOADING_TEXT );
+    u8g2.setFont(u8g2_font_wqy12_t_gb2312);
 }
 
 

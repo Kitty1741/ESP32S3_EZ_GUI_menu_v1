@@ -8,7 +8,7 @@ display_info list_to_display_info(  list *LIST );
 void link_info(display_info* A,display_info* B);
 
 //recall
-bool run_info_data(void* param);
+bool run_info(void* param);
 bool run_list(void* param);
 bool run_menu(void* param);
 bool do_nothing( void* do_nothing );

@@ -7,10 +7,9 @@
 void u8g2_print_display_info( display_info *INFO );
 
 //具体的打印函数
-void u8g2_print_INFO( display_info *INFO );
 void u8g2_print_LOADING();
 void u8g2_print_menu( menu *MENU );
-void u8g2_print_INFO( display_info *INFO );
+void u8g2_print_TEXT( display_info *INFO );
 void u8g2_print_list( display_info *INFO );
 void u8g2_print_BMP(display_info* INFO);
 void u8g2_print_setting( setting* SET );

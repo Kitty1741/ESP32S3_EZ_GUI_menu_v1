@@ -11,10 +11,10 @@
 */
 //主菜单选项列表
 option MAIN_MENU_LIST[] = {
-    {"WLAN",run_info_data,&WLAN_MENU_INFO},
-    {"test",run_info_data,&TEST_MENU_INFO},
+    {"WLAN",run_info,&WLAN_MENU_INFO},
+    {"test",run_info,&TEST_MENU_INFO},
     {"中文测试",do_nothing},
-    {"回调函数-菜单测试",run_info_data,NULL},
+    {"回调函数-菜单测试",run_info,NULL},
     {"多行测试",do_nothing},
     {"多行测试",do_nothing},
 };
