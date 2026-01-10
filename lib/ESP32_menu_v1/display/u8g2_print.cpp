@@ -92,6 +92,9 @@ inline void u8g2_print_display_info_once(display_info *INFO){
         case DISPLAY_MODE_IMAGE  :{
             u8g2_print_BMP( INFO );
         }break;// 图片显示
+        case DISPLAY_MODE_SETTING:{
+
+        }break;//设置选项显示
     }
 }
 
@@ -227,15 +230,17 @@ void u8g2_print_list( display_info *INFO ){
 
 /*
     函数名字：u8g2_print_BMP
-    函数功能：打印image_data类型图片
+    函数功能：打印image_data类型图片，支持简单地叠加处理（是否涂黑背景）
     返回值：没有
     参数：
         INFO
         类型：display_info*
         作用：传递要打印的图片信息
-*///
+*/
 void u8g2_print_BMP( display_info* INFO ){
 
+    u8g2.setDrawColor(1);
+    
     image* IMAGE = INFO->data.img;
     uint8_t bmp_data = 0;
     uint8_t x_cursor = 0;
@@ -249,9 +254,24 @@ void u8g2_print_BMP( display_info* INFO ){
     const uint8_t y = INFO->y;
     const uint8_t bytes_per_line = (width + 7) / 8;//每行包含字节数
 
+    //涂黑背景
+    if( IMAGE->if_black_background ){
+        u8g2.drawBox(INFO->x, INFO->y, 
+            width,
+            height
+        );
+        u8g2.setDrawColor(2);
+        u8g2.drawBox(INFO->x, INFO->y, 
+            width,
+            height
+        );
+    }
+    
+    u8g2.setDrawColor(1);
+
     for( y_cursor=0;  y_cursor < height      ; y_cursor++ ){
     for( x_cursor=0;  x_cursor<bytes_per_line; x_cursor++ ){
-    bmp_data = IMAGE->image_data[y_cursor*bytes_per_line +x_cursor];//记录对应数据
+    bmp_data = IMAGE->image_data[y_cursor*bytes_per_line +x_cursor];//记录对应数据 
 
     for(bit=0;bit<8;bit++){//打印记录数据
         draw_x = x + 8*x_cursor +bit;
@@ -260,5 +280,38 @@ void u8g2_print_BMP( display_info* INFO ){
         if( 8*x_cursor +bit < width ){//图像边界检查
         if( bmp_data & ( 0x80 >> bit ) ){
           u8g2.drawPixel( draw_x , draw_y ); // 在xy位置绘制一个像素.
-    }}}}}}
+    }}}}}}u8g2.setDrawColor(2);
+}
+
+/*
+    函数名字：u8g2_print_setting
+    函数功能：打印设置界面
+    返回值：没有
+    参数：
+        SET
+        类型：setting*
+        作用：传递要打印的设置界面信息
+*///
+void u8g2_print_setting( setting* SET ){
+
+    char str[64];
+
+    //显示到U8G2
+    u8g2.drawUTF8(3 ,4 , SET->name );//画设置名字
+    u8g2.drawFrame(0, 1, 128 , 16); //画空心矩形
+
+    //分类讨论不同菜单UI
+    if( SET->type == SET_TYPE_CHAR || SET->type == SET_TYPE_INT ){//简单设置
+        if( SET->type == SET_TYPE_INT )
+        sprintf(str , "值: %d" , *(int*)SET->setting_object);
+        else{
+            strcpy( str , "值: " );
+            strcat( str , (char*)SET->setting_object );
+        }
+        u8g2.drawUTF8(3 ,20 , str );
+        u8g2.drawUTF8(3 ,38 , "1/3.改变值" );
+        u8g2.drawUTF8(3 ,52 , "4.退出/确认" );
+    }
+    //else if( SET->type == SET_TYPE_FLOAT || SET->type == SET_TYPE_STRING ){}
+
 }

@@ -1,6 +1,4 @@
 #include <Arduino.h>
-#include <U8g2lib.h>
-#include <Wire.h>
 #include <global.h>
 #include <menu/internal.h>
 
@@ -21,7 +19,7 @@
 *///
 bool set_menu_cursor( menu *MENU ){
 
-    static uint8_t menu_key;
+    uint8_t menu_key;
 
     menu_key = get_last_key();//检测松手键值
 
@@ -67,7 +65,7 @@ bool set_menu_cursor( menu *MENU ){
 *///
 bool set_list_cursor( list *LIST ){
 
-    static uint8_t list_key;
+    uint8_t list_key;
     list_key = get_last_key();//检测松手键值
 
     //根据输入的键值确定光标移动/其他操作
@@ -91,6 +89,114 @@ bool set_list_cursor( list *LIST ){
 
     return false;
 }
+
+/*
+    函数名字：set_setting_cursor
+    函数功能：根据接口里的键值，设置设置值和光标
+    返回值：
+        类型：bool
+        意义：返回是否按下退出,如果是返回true
+    参数：
+        SIT
+        类型：sitting*
+        作用：告诉函数设置谁的光标
+*///
+bool set_setting_cursor( setting *SET ){
+
+    if( !SET || !SET->setting_object )return true;//防空指针
+
+    if( SET->type == SET_TYPE_CHAR || SET->type == SET_TYPE_INT )
+    if( set_EZ_cursor( SET ) == true )return true;
+    //else if( SET->type == SET_TYPE_FLOAT || SET->type == SET_TYPE_STRING )
+    //if( set_HD_cursor( SET ) == true )return true;
+
+
+    return false;
+}
+
+/*
+    函数名字：set_EZ_cursor
+    函数功能：仅设置char,int类设置项值和光标
+    返回值：
+        类型：bool
+        意义：返回是否按下退出,如果是返回true
+    参数：
+        SIT
+        类型：sitting*
+        作用：告诉函数设置谁的光标
+*///
+bool set_EZ_cursor( setting *SET ){
+
+    uint8_t setting_key;
+    uint16_t press_time;
+    bool if_long_press = false;//是否长按标志位
+
+
+    press_time = get_press_time();//检测按下事件
+    setting_key = get_last_key();//检测松手键值
+    if( !setting_key )//如果还没按键
+    vTaskDelay(20);//释放线程20ms
+    else//如果有了
+    if( press_time > 500 )//长按检测
+    if_long_press = true;
+
+
+    if( !if_long_press )//如果非长按
+    switch( setting_key ){
+        case KEY_NULL:{}break;
+        case KEY_UP_NUM:{//改变选项,--
+            if( SET->type == SET_TYPE_INT  )  *(int*)SET->setting_object -= 1;
+       else if( SET->type == SET_TYPE_CHAR ){
+                char* ptr = (char*)SET->setting_object;
+                *ptr < 32 ? *ptr = 126 : *ptr -= 1;
+            }
+        }break;
+        case KEY_OK_NUM:{//确认并且退出选项
+            SET->select = false;
+        }break;
+        case KEY_DOWN_NUM:{//改变选项,++
+            if( SET->type == SET_TYPE_INT  )  *(int*)SET->setting_object += 1;
+       else if( SET->type == SET_TYPE_CHAR ){
+                char* ptr = (char*)SET->setting_object;
+                *ptr > 126 ? *ptr = 32 : *ptr += 1;
+            }
+        }break;
+        case KEY_BACK_NUM:{//返回
+            SET->cursor = 0;
+            return true;
+        }break;
+    }
+    else//如果长按
+    switch( get_key_value() ){
+        case KEY_NULL:{}break;
+        case KEY_UP_NUM:{//连续改变选项,--
+            if( SET->type == SET_TYPE_INT  )  *(int*)SET->setting_object -= 1;
+       else if( SET->type == SET_TYPE_CHAR ){
+                char* ptr = (char*)SET->setting_object;
+                *ptr < 32 ? *ptr = 126 : *ptr -= 1;
+            }
+            vTaskDelay(40);
+        }break;
+        case KEY_OK_NUM:{//选中
+            SET->select = true;
+        }break;
+        case KEY_DOWN_NUM:{//连续改变选项,++
+            if( SET->type == SET_TYPE_INT  )  *(int*)SET->setting_object += 1;
+       else if( SET->type == SET_TYPE_CHAR ){
+                char* ptr = (char*)SET->setting_object;
+                *ptr > 126 ? *ptr = 32 : *ptr += 1;
+            }
+            vTaskDelay(40);
+        }break;
+        case KEY_BACK_NUM:{//返回
+            SET->cursor = 0;
+            return true;
+        }break;
+    }
+
+    return false;
+}
+
 
 
 /*

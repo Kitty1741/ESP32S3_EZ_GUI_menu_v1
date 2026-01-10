@@ -90,13 +90,31 @@ display_info image_to_display_info( image* IMAGE , ... ){
     return image_info;
 }
 
-
 /*
-    函数名字：do_nothing
-    函数功能：菜单的回调函数,防止报空指针填的选项
+    函数名字：link_layer
+    函数功能：把后一个输入的指针追加到A所在的链表中，实现图层叠加
     返回值：没有
-    参数：没有
+    参数：
+        A
+        类型：display_info*
+        作用：指向需要打印链表中的一个info的地址
+        B
+        类型：display_info*
+        作用：指向需要追加的info的地址
 *///
-bool do_nothing( void* do_nothing ){
-    return true;
+void link_layer(display_info* A,display_info* B){
+    
+    if( A == NULL || B == NULL )
+    return;
+
+    display_info* ptr = A;
+    while(1){
+        if( ptr->next != NULL )
+        ptr = ptr->next;
+        else
+        break;
+    }
+
+    ptr->next = B;
 }
+

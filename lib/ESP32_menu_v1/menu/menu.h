@@ -40,6 +40,30 @@ typedef struct list_t{
 
 }list;
 
+/*    
+设置 SITTING
+*///----------------------------------------------------------
+//设置结构体
+//枚举设置参数类型
+typedef enum setting_type_t{
+    SET_TYPE_INT,       //整数
+    SET_TYPE_FLOAT,     //浮点
+    SET_TYPE_CHAR,     //字符
+    SET_TYPE_STRING,    //字符串
+    SET_TYPE_ARROW_LIST,//数组（列表格式复用）
+}setting_type;
+
+//设置结构体
+typedef struct setting_t{
+
+    const char* name;//设置选项名字
+    setting_type type;//数据类型
+    void* setting_object;//对应修改的数据指针
+    uint8_t cursor;//光标
+    bool select;//是否选中选项
+
+}setting;
+
 
 
 
@@ -52,5 +76,7 @@ extern display_info MAIN_MENU_INFO;
 void task_loop( bool (*function)(void*) , void* param );
 bool set_menu_cursor( menu *MENU );
 bool set_list_cursor( list *LIST );
+bool set_setting_cursor( setting *SIT );
+bool set_EZ_cursor( setting *SIT );
 
 #endif

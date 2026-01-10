@@ -12,6 +12,7 @@ void u8g2_print_LOADING();
 void u8g2_print_menu( menu *MENU );
 void u8g2_print_INFO( display_info *INFO );
 void u8g2_print_list( display_info *INFO );
-void u8g2_print_BMP ( display_info *INFO );
+void u8g2_print_BMP(display_info* INFO);
+void u8g2_print_setting( setting* SET );
 
 #endif

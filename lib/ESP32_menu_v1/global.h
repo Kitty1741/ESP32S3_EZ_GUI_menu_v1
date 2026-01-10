@@ -11,6 +11,7 @@
 typedef struct option_t option;
 typedef struct menu_t menu;
 typedef struct list_t list;
+typedef struct setting_t setting;
 
 /*键盘*/
 /*
@@ -55,14 +56,15 @@ typedef enum{
     DISPLAY_MODE_MENU,      // 菜单显示
     DISPLAY_MODE_LIST,      // 文字列表
     DISPLAY_MODE_IMAGE,     // 图片显示
+    DISPLAY_MODE_SETTING,   // 设置界面显示
 }PRINT_MODE;
-
 //定义图片类型用来存储图片
 typedef uint8_t* image_arrow;
 typedef struct image_t{
     uint8_t width;//图片的宽度
     uint8_t height;//图片的高度
     image_arrow image_data;//一维数组指针，指向图片数据
+    bool if_black_background;//选项，背景是否黑色(否则不是)
 }image;
 
 
@@ -72,6 +74,7 @@ typedef union{
     menu* menu_t;//菜单类型
     image* img;//图片类型
     list* list_t;//列表类型
+    setting* setting_t;//设置类型
 }display_data;
 
 //用来传值打印内容的结构
@@ -105,6 +108,7 @@ extern void u8g2_print_display_info( display_info *INFO );
 //keybord.h
 extern uint8_t get_key_value();//松手后得到一次键值，然后销毁键值
 extern uint8_t get_last_key();//返回一次键值
+extern uint16_t get_press_time();//得到按下时间
 //freeRTOS
 extern SemaphoreHandle_t DisplayMutex;//显示互斥锁
 extern SemaphoreHandle_t DisplayUpdateSem;//显示刷新信号

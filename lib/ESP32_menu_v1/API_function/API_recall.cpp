@@ -79,3 +79,13 @@ bool run_list(void* param){
     set_display_info( &LIST_INFO );
     return false;
 }
+
+/*
+    函数名字：do_nothing
+    函数功能：菜单的回调函数,防止报空指针填的选项
+    返回值：没有
+    参数：没有
+*///
+bool do_nothing( void* do_nothing ){
+    return true;
+}
