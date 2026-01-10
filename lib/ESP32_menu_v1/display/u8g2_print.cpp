@@ -5,6 +5,7 @@
 #include <menu/internal.h>//内部模块
 #include <display/internal.h>//内部模块
 #include <display/u8g2_print.h>
+#include "image.h"
 
 //这里只放打印函数
 
@@ -81,8 +82,8 @@ inline void u8g2_print_display_info_once(display_info *INFO){
             u8g2_print_LOADING();
         }break;// 加载中
         case DISPLAY_MODE_INFO   :{
-            u8g2_print_INFO( INFO );// 信息显示(简单提示)
-        }break;
+            u8g2_print_INFO( INFO );
+        }break;// 信息显示(简单提示)
         case DISPLAY_MODE_MENU   :{
             u8g2_print_menu( INFO->data.menu_t );
         }break;// 菜单显示
@@ -152,12 +153,20 @@ void u8g2_print_INFO( display_info *INFO ){
 *///
 void u8g2_print_LOADING(){
 
-    switch( millis() / 200 % 4 ){
-        case 0:u8g2.drawUTF8( 4 , 2 , "加载中..." );break;
-        case 1:u8g2.drawUTF8( 4 , 2 , "加载中...." );break;
-        case 2:u8g2.drawUTF8( 4 , 2 , "加载中....." );break;
-        case 3:u8g2.drawUTF8( 4 , 2 , "加载中......" );break;
+    display_info INFO;
+    image* IMAGE;
+    INFO.mode = DISPLAY_MODE_IMAGE;
+    INFO.data.img = IMAGE;
+    INFO.x = 76;
+    INFO.y = 20;
+
+    switch( millis() / 100 % 3 ){
+        case 0:IMAGE = &LOADING_IMAGE_1;vTaskDelay(100);break;
+        case 1:IMAGE = &LOADING_IMAGE_2;vTaskDelay(100);break;
+        case 2:IMAGE = &LOADING_IMAGE_3;vTaskDelay(100);rotate_image(IMAGE, 1);break;
     }
+    u8g2_print_BMP( &INFO );
+    u8g2.drawUTF8(20,24,"加载中");
 }
 
 

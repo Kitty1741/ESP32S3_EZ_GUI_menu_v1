@@ -17,6 +17,7 @@ void menu_init_u8g2();
 //模式设置函数
 void set_black_image_background( display_info* INFO , bool if_black );
 void set_black_image_background( image* IMAGE , bool if_black );
+void rotate_image(image* IMAGE, uint8_t n);
 
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
 
